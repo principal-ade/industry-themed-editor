@@ -9,6 +9,7 @@ A Monaco editor wrapper that seamlessly integrates with [@a24z/industry-theme](h
 - 📦 **Lightweight** - Minimal wrapper around Monaco editor
 - ⚡ **Easy to use** - Works standalone or with ThemeProvider
 - 🎯 **Configurable** - Full access to Monaco editor options
+- ⌨️ **Vim mode support** - Built-in Vim keybindings with status bar
 
 ## Installation
 
@@ -103,6 +104,54 @@ function AdvancedEditor() {
 }
 ```
 
+### Vim Mode
+
+Enable Vim keybindings with the `vimMode` prop. This adds Vim-style navigation and editing commands, along with a status bar showing the current mode:
+
+```tsx
+import { ThemedMonacoWithProvider } from '@principal-ade/industry-themed-monaco';
+
+function VimEditor() {
+  return (
+    <ThemedMonacoWithProvider
+      value={code}
+      onChange={setCode}
+      language="typescript"
+      height="600px"
+      vimMode={true}  // Enable Vim mode
+    />
+  );
+}
+```
+
+When Vim mode is enabled:
+- A status bar appears at the bottom showing the current mode (Normal, Insert, Visual, etc.)
+- Standard Vim keybindings are available (i, a, o for insert mode, hjkl for navigation, etc.)
+- The status bar is styled to match your theme
+
+You can also toggle Vim mode dynamically:
+
+```tsx
+function ToggleableVimEditor() {
+  const [vimEnabled, setVimEnabled] = useState(false);
+
+  return (
+    <>
+      <button onClick={() => setVimEnabled(!vimEnabled)}>
+        {vimEnabled ? 'Disable' : 'Enable'} Vim Mode
+      </button>
+      <ThemedMonacoWithProvider
+        value={code}
+        onChange={setCode}
+        language="typescript"
+        height="600px"
+        vimMode={vimEnabled}
+      />
+    </>
+  );
+}
+```
+
 ### Custom Loading Component
 
 Provide a custom loading component that matches your theme:
@@ -165,6 +214,7 @@ The base editor component that accepts a theme prop.
 | `width` | `string \| number` | No | Editor width (default: '100%') |
 | `options` | `monaco.editor.IStandaloneEditorConstructionOptions` | No | Monaco editor options |
 | `loadingComponent` | `React.ReactNode` | No | Custom loading component |
+| `vimMode` | `boolean` | No | Enable Vim mode keybindings (default: false) |
 
 Plus all other props from `@monaco-editor/react`'s `EditorProps`.
 
