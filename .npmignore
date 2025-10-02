@@ -1,0 +1,11 @@
+src
+node_modules
+coverage
+*.log
+.DS_Store
+tsconfig.json
+.eslintrc
+.prettierrc
+tests
+*.test.ts
+*.test.tsx
