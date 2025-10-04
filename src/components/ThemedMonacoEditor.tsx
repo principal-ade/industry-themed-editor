@@ -2,7 +2,13 @@ import type { Theme } from '@a24z/industry-theme';
 import Editor, { loader, EditorProps, OnMount } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 import { initVimMode } from 'monaco-vim';
-import React, { useMemo, useRef, useEffect } from 'react';
+import React, {
+  useMemo,
+  useRef,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 
 // Configure Monaco to use the locally bundled version
 loader.config({ monaco });
@@ -65,22 +71,126 @@ export interface ThemedMonacoEditorProps extends Omit<EditorProps, 'theme' | 'lo
    * Enable Vim mode keybindings
    */
   vimMode?: boolean;
+  /**
+   * Initial value to seed the editor with when used in uncontrolled mode
+   */
+  initialValue?: string;
+  /**
+   * Callback invoked when the editor content should be saved (e.g., via Ctrl/Cmd+S)
+   */
+  onSave?: (value: string, context: { filePath?: string }) => void | Promise<void>;
+  /**
+   * Optional file path used to provide additional context to save handlers
+   */
+  filePath?: string;
+  /**
+   * Enable the Ctrl/Cmd+S save shortcut (defaults to true)
+   */
+  enableSaveShortcut?: boolean;
+  /**
+   * Optional callback that is notified when the dirty state changes
+   */
+  onDirtyChange?: (isDirty: boolean) => void;
 }
 
 /**
  * A Monaco editor component that integrates with industry-theme
  */
-export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = ({
-  theme,
-  loadingComponent,
-  options,
-  vimMode = false,
-  onMount,
-  ...editorProps
-}) => {
+export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = (props) => {
+  const {
+    theme,
+    loadingComponent,
+    options,
+    vimMode = false,
+    onMount,
+    initialValue,
+    onSave,
+    filePath,
+    enableSaveShortcut = true,
+    onDirtyChange,
+    ...restEditorProps
+  } = props;
+
+  const {
+    value: controlledValue,
+    defaultValue,
+    onChange: externalOnChange,
+    ...forwardedEditorProps
+  } = restEditorProps;
+
+  const isControlled = controlledValue !== undefined;
+
+  const computeInitialValue = useCallback(() => {
+    if (initialValue !== undefined) return initialValue;
+    if (typeof controlledValue === 'string') return controlledValue;
+    if (typeof defaultValue === 'string') return defaultValue;
+    return '';
+  }, [controlledValue, defaultValue, initialValue]);
+
+  const [internalValue, setInternalValue] = useState<string>(() => computeInitialValue());
+  const [savedValue, setSavedValue] = useState<string>(() => computeInitialValue());
+  const [isDirty, setIsDirty] = useState<boolean>(false);
+
   const monacoTheme = useMemo(() => getMonacoTheme(theme), [theme]);
   const vimModeRef = useRef<{ dispose: () => void } | null>(null);
-  const statusNodeRef = useRef<HTMLDivElement | null>(null);
+  const vimStatusNodeRef = useRef<HTMLDivElement | null>(null);
+  const prevFilePathRef = useRef<string | undefined>(filePath);
+  const prevInitialValueRef = useRef<string | undefined>(initialValue);
+
+  const currentValue = isControlled
+    ? (controlledValue as string | undefined) ?? ''
+    : internalValue;
+
+  useEffect(() => {
+    if (!isControlled && initialValue !== undefined && initialValue !== prevInitialValueRef.current) {
+      setInternalValue(initialValue);
+      setSavedValue(initialValue);
+      setIsDirty(false);
+      prevInitialValueRef.current = initialValue;
+    }
+  }, [initialValue, isControlled]);
+
+  useEffect(() => {
+    if (filePath !== prevFilePathRef.current) {
+      const baseline = initialValue ?? currentValue;
+      if (!isControlled && initialValue !== undefined) {
+        setInternalValue(initialValue);
+      }
+      setSavedValue(baseline);
+      setIsDirty(false);
+      prevFilePathRef.current = filePath;
+    }
+  }, [currentValue, filePath, initialValue, isControlled]);
+
+  useEffect(() => {
+    const dirty = currentValue !== savedValue;
+    setIsDirty((prev) => (prev === dirty ? prev : dirty));
+  }, [currentValue, savedValue]);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  const updateSavedState = useCallback(
+    (nextSavedValue: string) => {
+      setSavedValue(nextSavedValue);
+      setIsDirty(false);
+    },
+    []
+  );
+
+  const handleChange = useCallback<NonNullable<EditorProps['onChange']>>( 
+    (value, event) => {
+      const nextValue = value ?? '';
+      if (!isControlled) {
+        setInternalValue(nextValue);
+      }
+      const dirty = nextValue !== savedValue;
+      setIsDirty((prev) => (prev === dirty ? prev : dirty));
+      externalOnChange?.(value, event);
+    },
+    [externalOnChange, isControlled, savedValue]
+  );
 
   const defaultOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
     readOnly: false,
@@ -102,15 +212,31 @@ export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = ({
     <div style={{ color: theme.colors.textSecondary, padding: 8 }}>Loading editor…</div>
   );
 
-  const handleMount: OnMount = (editor, monaco) => {
+  const handleMount: OnMount = (editor, monacoInstance) => {
     // Initialize Vim mode if enabled
-    if (vimMode && statusNodeRef.current) {
-      vimModeRef.current = initVimMode(editor, statusNodeRef.current);
+    if (vimMode && vimStatusNodeRef.current) {
+      vimModeRef.current = initVimMode(editor, vimStatusNodeRef.current);
+    }
+
+    if (enableSaveShortcut && onSave) {
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, async () => {
+        const latestValue = editor.getValue();
+        try {
+          const result = onSave(latestValue, { filePath });
+          if (result && typeof (result as Promise<void>).then === 'function') {
+            await result;
+          }
+          updateSavedState(latestValue);
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to save editor contents', error);
+        }
+      });
     }
 
     // Call user's onMount handler if provided
     if (onMount) {
-      onMount(editor, monaco);
+      onMount(editor, monacoInstance);
     }
   };
 
@@ -131,16 +257,21 @@ export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = ({
         options={mergedOptions}
         loading={loading}
         onMount={handleMount}
-        {...editorProps}
+        value={currentValue}
+        onChange={handleChange}
+        defaultValue={defaultValue}
+        {...forwardedEditorProps}
       />
-      {vimMode && (
+      {(vimMode || onSave || !isControlled) && (
         <div
-          ref={statusNodeRef}
           style={{
             position: 'absolute',
             bottom: 0,
             left: 0,
             right: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
             padding: '4px 8px',
             backgroundColor: theme.colors.backgroundSecondary,
             color: theme.colors.text,
@@ -149,7 +280,29 @@ export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = ({
             borderTop: `1px solid ${theme.colors.border}`,
             zIndex: 1000,
           }}
-        />
+        >
+          {vimMode && (
+            <div
+              ref={vimStatusNodeRef}
+              style={{ flex: 1, minHeight: '1em' }}
+            />
+          )}
+          <div
+            style={{
+              marginLeft: vimMode ? 'auto' : 0,
+              padding: '0 6px',
+              borderRadius: 4,
+              border: `1px solid ${isDirty ? theme.colors.danger || theme.colors.primary : theme.colors.border}`,
+              backgroundColor: isDirty
+                ? theme.colors.backgroundAccent || theme.colors.backgroundSecondary
+                : theme.colors.background,
+              color: isDirty ? theme.colors.danger || theme.colors.primary : theme.colors.textSecondary,
+              fontWeight: 600,
+            }}
+          >
+            {isDirty ? 'Unsaved changes' : 'Saved'}
+          </div>
+        </div>
       )}
     </div>
   );

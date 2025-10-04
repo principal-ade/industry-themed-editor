@@ -76,6 +76,61 @@ function CodeEditor() {
 }
 ```
 
+### Uncontrolled editing with save shortcuts
+
+`ThemedMonacoEditor` can manage its own value when you omit the `value` prop. Provide an `initialValue` and an `onSave` callback to let the component keep track of dirty state, show a Saved/Unsaved badge, and hook into `Ctrl/Cmd + S`:
+
+```tsx
+import { useCallback, useState } from 'react';
+import { terminalTheme } from '@a24z/industry-theme';
+import { ThemedMonacoEditor } from '@principal-ade/industry-themed-monaco';
+
+function FileEditor({ filePath }: { filePath: string }) {
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+
+  const handleSave = useCallback(
+    async (contents: string) => {
+      setStatus('saving');
+      try {
+        const response = await fetch(`/api/files/${encodeURIComponent(filePath)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'text/plain' },
+          body: contents,
+        });
+        if (!response.ok) {
+          throw new Error('Failed to save file');
+        }
+        setStatus('saved');
+      } catch (error) {
+        console.error(error);
+        setStatus('error');
+        throw error;
+      }
+    },
+    [filePath]
+  );
+
+  return (
+    <div style={{ height: '100%' }}>
+      <ThemedMonacoEditor
+        theme={terminalTheme}
+        filePath={filePath}
+        initialValue={'// Contents fetched from your backend'}
+        language="typescript"
+        height="100%"
+        onSave={handleSave}
+        onDirtyChange={(dirty) => dirty && setStatus('idle')}
+      />
+      <div>{status === 'saving' ? 'Saving…' : status === 'error' ? 'Save failed' : null}</div>
+    </div>
+  );
+}
+```
+
+> ℹ️ Fetch the initial file contents from your backend, pass them into `initialValue`, and reuse the same endpoint inside `onSave`. The save callback can be synchronous or return a promise—`ThemedMonacoEditor` waits for it to resolve before clearing the dirty badge.
+
+Disable the keyboard shortcut entirely by setting `enableSaveShortcut={false}` when you want to handle save triggers in your own UI.
+
 ### Advanced Usage
 
 You can pass any Monaco editor options through the `options` prop:
