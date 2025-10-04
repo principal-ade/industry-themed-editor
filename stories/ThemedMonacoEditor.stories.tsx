@@ -318,3 +318,165 @@ export const VimModeMatrix: Story = {
     onMount: fn(),
   },
 };
+
+// Save functionality example
+export const WithSaveSupport: Story = {
+  render: () => {
+    const [lastSaved, setLastSaved] = useState<string>('Never');
+    const [isDirty, setIsDirty] = useState(false);
+
+    const handleSave = (value: string, context: { filePath?: string }) => {
+      console.log('Saving file:', context.filePath, 'with content:', value);
+      setLastSaved(new Date().toLocaleTimeString());
+    };
+
+    return (
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div
+          style={{
+            padding: '16px',
+            backgroundColor: terminalTheme.colors.backgroundSecondary,
+            borderBottom: `1px solid ${terminalTheme.colors.border}`,
+            color: terminalTheme.colors.text,
+            fontFamily: terminalTheme.fonts.body,
+          }}
+        >
+          <div>Press <kbd>Ctrl/Cmd+S</kbd> to save</div>
+          <div>Last saved: {lastSaved}</div>
+          <div>Dirty: {isDirty ? 'Yes' : 'No'}</div>
+        </div>
+        <div style={{ flex: 1 }}>
+          <ThemedMonacoEditor
+            theme={terminalTheme}
+            initialValue={sampleCode}
+            language="typescript"
+            height="100%"
+            filePath="example.ts"
+            onSave={handleSave}
+            onDirtyChange={setIsDirty}
+          />
+        </div>
+      </div>
+    );
+  },
+};
+
+// Custom UI with hidden status bar
+export const CustomStatusBar: Story = {
+  render: () => {
+    const [lastSaved, setLastSaved] = useState<string>('Never');
+    const [isDirty, setIsDirty] = useState(false);
+    const currentFile = 'example.ts';
+
+    const handleSave = (value: string, context: { filePath?: string }) => {
+      console.log('Saving file:', context.filePath, 'with content:', value);
+      setLastSaved(new Date().toLocaleTimeString());
+    };
+
+    return (
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        {/* Custom header bar with file info and status */}
+        <div
+          style={{
+            padding: '12px 16px',
+            backgroundColor: matrixTheme.colors.backgroundSecondary,
+            borderBottom: `2px solid ${matrixTheme.colors.primary}`,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span
+              style={{
+                color: matrixTheme.colors.text,
+                fontFamily: matrixTheme.fonts.monospace,
+                fontSize: '14px',
+                fontWeight: 'bold',
+              }}
+            >
+              {currentFile}
+              {isDirty && (
+                <span style={{ color: matrixTheme.colors.primary }}> ●</span>
+              )}
+            </span>
+            <span
+              style={{
+                color: matrixTheme.colors.textSecondary,
+                fontFamily: matrixTheme.fonts.body,
+                fontSize: '12px',
+              }}
+            >
+              TypeScript
+            </span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span
+              style={{
+                color: isDirty ? matrixTheme.colors.primary : matrixTheme.colors.success,
+                fontFamily: matrixTheme.fonts.body,
+                fontSize: '12px',
+              }}
+            >
+              {isDirty ? '⚠ Unsaved changes' : '✓ All changes saved'}
+            </span>
+            <span
+              style={{
+                color: matrixTheme.colors.textSecondary,
+                fontFamily: matrixTheme.fonts.body,
+                fontSize: '12px',
+              }}
+            >
+              Last saved: {lastSaved}
+            </span>
+          </div>
+        </div>
+
+        {/* Editor with hidden status bar */}
+        <div style={{ flex: 1 }}>
+          <ThemedMonacoEditor
+            theme={matrixTheme}
+            initialValue={sampleCode}
+            language="typescript"
+            height="100%"
+            filePath={currentFile}
+            onSave={handleSave}
+            onDirtyChange={setIsDirty}
+            hideStatusBar={true}
+          />
+        </div>
+
+        {/* Custom footer */}
+        <div
+          style={{
+            padding: '8px 16px',
+            backgroundColor: matrixTheme.colors.backgroundSecondary,
+            borderTop: `1px solid ${matrixTheme.colors.border}`,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <span
+            style={{
+              color: matrixTheme.colors.textSecondary,
+              fontFamily: matrixTheme.fonts.monospace,
+              fontSize: '11px',
+            }}
+          >
+            Press Ctrl/Cmd+S to save
+          </span>
+          <span
+            style={{
+              color: matrixTheme.colors.textSecondary,
+              fontFamily: matrixTheme.fonts.monospace,
+              fontSize: '11px',
+            }}
+          >
+            UTF-8 | LF
+          </span>
+        </div>
+      </div>
+    );
+  },
+};

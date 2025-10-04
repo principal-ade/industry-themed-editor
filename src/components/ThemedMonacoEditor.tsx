@@ -91,6 +91,11 @@ export interface ThemedMonacoEditorProps extends Omit<EditorProps, 'theme' | 'lo
    * Optional callback that is notified when the dirty state changes
    */
   onDirtyChange?: (isDirty: boolean) => void;
+  /**
+   * Hide the built-in status bar (for vim mode and save indicators)
+   * Useful when the parent component wants to show its own UI
+   */
+  hideStatusBar?: boolean;
 }
 
 /**
@@ -108,6 +113,7 @@ export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = (props) => 
     filePath,
     enableSaveShortcut = true,
     onDirtyChange,
+    hideStatusBar = false,
     ...restEditorProps
   } = props;
 
@@ -228,7 +234,6 @@ export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = (props) => 
           }
           updateSavedState(latestValue);
         } catch (error) {
-          // eslint-disable-next-line no-console
           console.error('Failed to save editor contents', error);
         }
       });
@@ -262,7 +267,7 @@ export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = (props) => 
         defaultValue={defaultValue}
         {...forwardedEditorProps}
       />
-      {(vimMode || onSave || !isControlled) && (
+      {!hideStatusBar && (vimMode || onSave || !isControlled) && (
         <div
           style={{
             position: 'absolute',
@@ -292,11 +297,11 @@ export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = (props) => 
               marginLeft: vimMode ? 'auto' : 0,
               padding: '0 6px',
               borderRadius: 4,
-              border: `1px solid ${isDirty ? theme.colors.danger || theme.colors.primary : theme.colors.border}`,
+              border: `1px solid ${isDirty ? theme.colors.warning : theme.colors.border}`,
               backgroundColor: isDirty
-                ? theme.colors.backgroundAccent || theme.colors.backgroundSecondary
+                ? theme.colors.backgroundSecondary
                 : theme.colors.background,
-              color: isDirty ? theme.colors.danger || theme.colors.primary : theme.colors.textSecondary,
+              color: isDirty ? theme.colors.warning : theme.colors.textSecondary,
               fontWeight: 600,
             }}
           >
