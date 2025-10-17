@@ -31,6 +31,35 @@ if (typeof window !== 'undefined') {
       return './editor.worker.js';
     },
   };
+
+  // Configure language defaults: Keep syntax validation, disable semantic validation
+  // This provides syntax highlighting and catches syntax errors without spurious warnings
+  // about missing modules, type mismatches, etc. that need project context
+
+  // TypeScript - keep syntax errors, disable semantic validation
+  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+    noSemanticValidation: true, // No type checking/module resolution
+    noSyntaxValidation: false, // Keep syntax errors
+    noSuggestionDiagnostics: true,
+  });
+
+  // JavaScript - same settings
+  monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+    noSemanticValidation: true,
+    noSyntaxValidation: false,
+    noSuggestionDiagnostics: true,
+  });
+
+  // JSON - allow syntax errors but no schema validation
+  monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+    validate: true,
+    schemas: [], // No schema validation
+  });
+
+  // CSS - keep syntax validation
+  monaco.languages.css.cssDefaults.setDiagnosticsOptions({
+    validate: true,
+  });
 }
 
 /**
@@ -96,6 +125,23 @@ export interface ThemedMonacoEditorProps extends Omit<EditorProps, 'theme' | 'lo
    * Useful when the parent component wants to show its own UI
    */
   hideStatusBar?: boolean;
+  /**
+   * TypeScript diagnostics options (overrides global defaults)
+   * Use this to enable semantic validation or customize error reporting
+   */
+  typescriptDiagnosticsOptions?: monaco.languages.typescript.DiagnosticsOptions;
+  /**
+   * JavaScript diagnostics options (overrides global defaults)
+   */
+  javascriptDiagnosticsOptions?: monaco.languages.typescript.DiagnosticsOptions;
+  /**
+   * JSON diagnostics options (overrides global defaults)
+   */
+  jsonDiagnosticsOptions?: monaco.languages.json.DiagnosticsOptions;
+  /**
+   * CSS diagnostics options (overrides global defaults)
+   */
+  cssDiagnosticsOptions?: monaco.languages.css.DiagnosticsOptions;
 }
 
 /**
@@ -114,6 +160,10 @@ export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = (props) => 
     enableSaveShortcut = true,
     onDirtyChange,
     hideStatusBar = false,
+    typescriptDiagnosticsOptions,
+    javascriptDiagnosticsOptions,
+    jsonDiagnosticsOptions,
+    cssDiagnosticsOptions,
     ...restEditorProps
   } = props;
 
@@ -219,6 +269,24 @@ export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = (props) => 
   );
 
   const handleMount: OnMount = (editor, monacoInstance) => {
+    // Apply language diagnostics options if provided
+    if (typescriptDiagnosticsOptions) {
+      monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions(
+        typescriptDiagnosticsOptions
+      );
+    }
+    if (javascriptDiagnosticsOptions) {
+      monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions(
+        javascriptDiagnosticsOptions
+      );
+    }
+    if (jsonDiagnosticsOptions) {
+      monaco.languages.json.jsonDefaults.setDiagnosticsOptions(jsonDiagnosticsOptions);
+    }
+    if (cssDiagnosticsOptions) {
+      monaco.languages.css.cssDefaults.setDiagnosticsOptions(cssDiagnosticsOptions);
+    }
+
     // Initialize Vim mode if enabled
     if (vimMode && vimStatusNodeRef.current) {
       vimModeRef.current = initVimMode(editor, vimStatusNodeRef.current);

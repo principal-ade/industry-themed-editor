@@ -97,8 +97,6 @@ export const ThemedMonacoDiffEditor: React.FC<ThemedMonacoDiffEditorProps> = (pr
 
   const {
     modified: controlledModified,
-    defaultValue,
-    onChange: externalOnChange,
     ...forwardedEditorProps
   } = restEditorProps;
 
@@ -108,9 +106,8 @@ export const ThemedMonacoDiffEditor: React.FC<ThemedMonacoDiffEditorProps> = (pr
   const computeInitialModifiedValue = useCallback(() => {
     if (resolvedInitialModifiedValue !== undefined) return resolvedInitialModifiedValue;
     if (typeof controlledModified === 'string') return controlledModified;
-    if (typeof defaultValue === 'string') return defaultValue;
     return '';
-  }, [controlledModified, defaultValue, resolvedInitialModifiedValue]);
+  }, [controlledModified, resolvedInitialModifiedValue]);
 
   const [internalModifiedValue, setInternalModifiedValue] = useState<string>(() =>
     computeInitialModifiedValue()
@@ -198,18 +195,6 @@ export const ThemedMonacoDiffEditor: React.FC<ThemedMonacoDiffEditorProps> = (pr
     setIsDirty(false);
   }, []);
 
-  type DiffOnChangeHandler = NonNullable<DiffEditorProps['onChange']>;
-  const handleChange = useCallback<DiffOnChangeHandler>(
-    (value, event) => {
-      const nextValue = value ?? '';
-      if (!isModifiedControlled) {
-        setInternalModifiedValue(nextValue);
-      }
-      syncDirtyState(nextValue);
-      externalOnChange?.(value, event);
-    },
-    [externalOnChange, isModifiedControlled, syncDirtyState]
-  );
 
   const defaultOptions: monaco.editor.IDiffEditorConstructionOptions = {
     readOnly: false,
@@ -307,8 +292,6 @@ export const ThemedMonacoDiffEditor: React.FC<ThemedMonacoDiffEditorProps> = (pr
         loading={loading}
         onMount={handleMount}
         modified={currentModifiedValue}
-        onChange={handleChange}
-        defaultValue={defaultValue}
         {...forwardedEditorProps}
       />
       {shouldShowStatusBar && (
