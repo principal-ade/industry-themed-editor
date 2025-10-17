@@ -1,6 +1,6 @@
 {
   "name": "@principal-ade/industry-themed-monaco-editor",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Industry-themed Monaco editor wrapper with presentation capabilities",
   "type": "module",
   "main": "dist/index.mjs",
