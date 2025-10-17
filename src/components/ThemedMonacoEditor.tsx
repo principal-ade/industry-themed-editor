@@ -324,24 +324,22 @@ export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = (props) => 
   }, [vimMode]);
 
   return (
-    <div style={{ position: 'relative', height: '100%' }}>
-      <Editor
-        theme={monacoTheme}
-        options={mergedOptions}
-        loading={loading}
-        onMount={handleMount}
-        value={currentValue}
-        onChange={handleChange}
-        defaultValue={defaultValue}
-        {...forwardedEditorProps}
-      />
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div style={{ flex: 1, overflow: 'hidden' }}>
+        <Editor
+          theme={monacoTheme}
+          options={mergedOptions}
+          loading={loading}
+          onMount={handleMount}
+          value={currentValue}
+          onChange={handleChange}
+          defaultValue={defaultValue}
+          {...forwardedEditorProps}
+        />
+      </div>
       {!hideStatusBar && (vimMode || onSave || !isControlled) && (
         <div
           style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
@@ -351,7 +349,6 @@ export const ThemedMonacoEditor: React.FC<ThemedMonacoEditorProps> = (props) => 
             fontFamily: theme.fonts?.monospace || 'monospace',
             fontSize: theme.fontSizes?.[1] || 12,
             borderTop: `1px solid ${theme.colors.border}`,
-            zIndex: 1000,
           }}
         >
           {vimMode && (

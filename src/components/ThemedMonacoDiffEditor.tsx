@@ -285,22 +285,20 @@ export const ThemedMonacoDiffEditor: React.FC<ThemedMonacoDiffEditorProps> = (pr
   const shouldShowStatusBar = !hideStatusBar && (vimMode || onSave || !isModifiedControlled);
 
   return (
-    <div style={{ position: 'relative', height: '100%' }}>
-      <DiffEditor
-        theme={monacoTheme}
-        options={mergedOptions}
-        loading={loading}
-        onMount={handleMount}
-        modified={currentModifiedValue}
-        {...forwardedEditorProps}
-      />
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div style={{ flex: 1, overflow: 'hidden' }}>
+        <DiffEditor
+          theme={monacoTheme}
+          options={mergedOptions}
+          loading={loading}
+          onMount={handleMount}
+          modified={currentModifiedValue}
+          {...forwardedEditorProps}
+        />
+      </div>
       {shouldShowStatusBar && (
         <div
           style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
@@ -310,7 +308,6 @@ export const ThemedMonacoDiffEditor: React.FC<ThemedMonacoDiffEditorProps> = (pr
             fontFamily: theme.fonts?.monospace || 'monospace',
             fontSize: theme.fontSizes?.[1] || 12,
             borderTop: `1px solid ${theme.colors.border}`,
-            zIndex: 1000,
           }}
         >
           <div style={{ flex: 1, minHeight: '1em', display: 'flex', alignItems: 'center' }}>
