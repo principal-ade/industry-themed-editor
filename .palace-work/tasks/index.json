@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": 1760838505049,
+  "tasks": {
+    "task-1760716983210-ygz2arn00": {
+      "id": "task-1760716983210-ygz2arn00",
+      "status": "completed",
+      "priority": "normal",
+      "directoryPath": "",
+      "senderId": "electron-app",
+      "tags": [
+        "typescript",
+        "monaco-editor",
+        "diagnostics",
+        "bug"
+      ],
+      "receivedAt": 1760716983210,
+      "updatedAt": 1760838505048,
+      "completedAt": 1760838505048,
+      "filePath": "history/task-1760716983210-ygz2arn00.hist.md"
+    }
+  },
+  "byStatus": {
+    "pending": [],
+    "acknowledged": [],
+    "in_progress": [],
+    "completed": [
+      "task-1760716983210-ygz2arn00"
+    ],
+    "failed": []
+  },
+  "bySender": {
+    "electron-app": [
+      "task-1760716983210-ygz2arn00"
+    ]
+  },
+  "byADE": {}
+}

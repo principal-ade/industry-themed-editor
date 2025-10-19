@@ -1,0 +1,2 @@
+{"taskId":"task-1760716983210-ygz2arn00","timestamp":1760716983210,"eventType":"received","actor":"electron-app"}
+{"taskId":"task-1760716983210-ygz2arn00","timestamp":1760838505048,"eventType":"completed","actor":"system","details":{"gitRefs":{"commitSha":"manual-completion-1760838505048","branch":"unknown"}}}
