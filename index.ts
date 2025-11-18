@@ -1,7 +1,7 @@
 /**
  * @principal-ade/industry-themed-monaco
  *
- * A Monaco editor wrapper that integrates with @a24z/industry-theme
+ * A Monaco editor wrapper that integrates with @principal-ade/industry-theme
  */
 
 // Main components
@@ -14,5 +14,5 @@ export type { ThemedMonacoDiffEditorProps } from './src/components/ThemedMonacoD
 export { ThemedMonacoWithProvider } from './src/components/ThemedMonacoWithProvider';
 export type { ThemedMonacoWithProviderProps } from './src/components/ThemedMonacoWithProvider';
 
-// Re-export types from @a24z/industry-theme for convenience
-export type { Theme } from '@a24z/industry-theme';
+// Re-export types from @principal-ade/industry-theme for convenience
+export type { Theme } from '@principal-ade/industry-theme';

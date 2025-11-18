@@ -1,6 +1,6 @@
 # @principal-ade/industry-themed-monaco
 
-A Monaco editor wrapper that seamlessly integrates with [@a24z/industry-theme](https://www.npmjs.com/package/@a24z/industry-theme), providing a themed code editor experience that matches your application's industry theme.
+A Monaco editor wrapper that seamlessly integrates with [@principal-ade/industry-theme](https://www.npmjs.com/package/@principal-ade/industry-theme), providing a themed code editor experience that matches your application's industry theme.
 
 ## Features
 
@@ -14,13 +14,13 @@ A Monaco editor wrapper that seamlessly integrates with [@a24z/industry-theme](h
 ## Installation
 
 ```bash
-npm install @principal-ade/industry-themed-monaco @a24z/industry-theme @monaco-editor/react monaco-editor
+npm install @principal-ade/industry-themed-monaco @principal-ade/industry-theme @monaco-editor/react monaco-editor
 ```
 
 or with bun:
 
 ```bash
-bun add @principal-ade/industry-themed-monaco @a24z/industry-theme @monaco-editor/react monaco-editor
+bun add @principal-ade/industry-themed-monaco @principal-ade/industry-theme @monaco-editor/react monaco-editor
 ```
 
 ## Usage
@@ -31,7 +31,7 @@ The easiest way to use the editor is with `ThemedMonacoWithProvider`, which auto
 
 ```tsx
 import React, { useState } from 'react';
-import { ThemeProvider, terminalTheme } from '@a24z/industry-theme';
+import { ThemeProvider, terminalTheme } from '@principal-ade/industry-theme';
 import { ThemedMonacoWithProvider } from '@principal-ade/industry-themed-monaco';
 
 function App() {
@@ -58,7 +58,7 @@ You can also use `ThemedMonacoEditor` directly by passing a theme object:
 
 ```tsx
 import React, { useState } from 'react';
-import { terminalTheme } from '@a24z/industry-theme';
+import { terminalTheme } from '@principal-ade/industry-theme';
 import { ThemedMonacoEditor } from '@principal-ade/industry-themed-monaco';
 
 function CodeEditor() {
@@ -82,7 +82,7 @@ function CodeEditor() {
 
 ```tsx
 import { useCallback, useState } from 'react';
-import { terminalTheme } from '@a24z/industry-theme';
+import { terminalTheme } from '@principal-ade/industry-theme';
 import { ThemedMonacoEditor } from '@principal-ade/industry-themed-monaco';
 
 function FileEditor({ filePath }: { filePath: string }) {
@@ -238,7 +238,7 @@ function EditorWithCustomLoading() {
 
 ## Available Themes
 
-The package works with all themes from `@a24z/industry-theme`:
+The package works with all themes from `@principal-ade/industry-theme`:
 
 ```tsx
 import {
@@ -248,7 +248,7 @@ import {
   matrixTheme,
   matrixMinimalTheme,
   slateTheme,
-} from '@a24z/industry-theme';
+} from '@principal-ade/industry-theme';
 ```
 
 ## API Reference
@@ -342,7 +342,7 @@ Contributions are welcome! Please check the [repository](https://github.com/prin
 
 ## Related Packages
 
-- [@a24z/industry-theme](https://www.npmjs.com/package/@a24z/industry-theme) - Theme system
+- [@principal-ade/industry-theme](https://www.npmjs.com/package/@principal-ade/industry-theme) - Theme system
 - [themed-markdown](https://www.npmjs.com/package/themed-markdown) - Themed markdown renderer
 - [@monaco-editor/react](https://www.npmjs.com/package/@monaco-editor/react) - React wrapper for Monaco
 

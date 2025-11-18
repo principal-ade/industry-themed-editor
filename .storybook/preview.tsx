@@ -1,4 +1,4 @@
-import { ThemeProvider, terminalTheme } from '@a24z/industry-theme';
+import { ThemeProvider, terminalTheme } from '@principal-ade/industry-theme';
 import type { Preview } from '@storybook/react';
 import React from 'react';
 

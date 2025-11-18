@@ -1,6 +1,6 @@
 {
   "name": "@principal-ade/industry-themed-monaco-editor",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Industry-themed Monaco editor wrapper with presentation capabilities",
   "type": "module",
   "main": "dist/index.mjs",
@@ -17,7 +17,7 @@
   },
   "scripts": {
     "build": "bun run clean && bun run build:esm && bun run build:types",
-    "build:esm": "NODE_ENV=production bun build ./index.ts --outfile ./dist/index.mjs --format esm --target browser --external react --external react-dom --external @monaco-editor/react --external monaco-editor --external @a24z/industry-theme --external monaco-vim",
+    "build:esm": "NODE_ENV=production bun build ./index.ts --outfile ./dist/index.mjs --format esm --target browser --external react --external react-dom --external @monaco-editor/react --external monaco-editor --external @principal-ade/industry-theme --external monaco-vim",
     "build:types": "tsc --project tsconfig.build.json --emitDeclarationOnly --declaration --declarationMap",
     "dev": "bun run build --watch",
     "test": "bun test",
@@ -41,7 +41,7 @@
   "author": "Principal ADE Team",
   "license": "MIT",
   "dependencies": {
-    "@a24z/industry-theme": "^0.1.1",
+    "@principal-ade/industry-theme": "^0.1.2",
     "monaco-vim": "^0.4.2"
   },
   "peerDependencies": {

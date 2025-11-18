@@ -1,4 +1,4 @@
-import { useTheme } from '@a24z/industry-theme';
+import { useTheme } from '@principal-ade/industry-theme';
 import React from 'react';
 import { ThemedMonacoEditor, ThemedMonacoEditorProps } from './ThemedMonacoEditor';
 
@@ -18,7 +18,7 @@ export type ThemedMonacoWithProviderProps = Omit<ThemedMonacoEditorProps, 'theme
  *
  * @example
  * ```tsx
- * import { ThemeProvider, terminalTheme } from '@a24z/industry-theme';
+ * import { ThemeProvider, terminalTheme } from '@principal-ade/industry-theme';
  * import { ThemedMonacoWithProvider } from '@principal-ade/industry-themed-monaco';
  *
  * function App() {

@@ -6,7 +6,7 @@ import {
   matrixMinimalTheme,
   slateTheme,
   type Theme,
-} from '@a24z/industry-theme';
+} from '@principal-ade/industry-theme';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import React, { useState } from 'react';
@@ -272,7 +272,7 @@ const jsonCode = `{
   "main": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "dependencies": {
-    "@a24z/industry-theme": "^0.1.1"
+    "@principal-ade/industry-theme": "^0.1.2"
   },
   "peerDependencies": {
     "@monaco-editor/react": ">=4.0.0",

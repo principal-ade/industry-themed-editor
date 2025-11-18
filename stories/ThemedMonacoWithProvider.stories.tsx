@@ -7,7 +7,7 @@ import {
   matrixMinimalTheme,
   slateTheme,
   type Theme,
-} from '@a24z/industry-theme';
+} from '@principal-ade/industry-theme';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import React, { useState } from 'react';
