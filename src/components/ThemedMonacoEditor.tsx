@@ -35,29 +35,32 @@ if (typeof window !== 'undefined') {
   // Configure language defaults: Keep syntax validation, disable semantic validation
   // This provides syntax highlighting and catches syntax errors without spurious warnings
   // about missing modules, type mismatches, etc. that need project context
+  //
+  // Note: We use optional chaining because when MonacoWebpackPlugin is used,
+  // language support may not be loaded synchronously at module initialization time.
 
   // TypeScript - keep syntax errors, disable semantic validation
-  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+  monaco.languages.typescript?.typescriptDefaults?.setDiagnosticsOptions({
     noSemanticValidation: true, // No type checking/module resolution
     noSyntaxValidation: false, // Keep syntax errors
     noSuggestionDiagnostics: true,
   });
 
   // JavaScript - same settings
-  monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+  monaco.languages.typescript?.javascriptDefaults?.setDiagnosticsOptions({
     noSemanticValidation: true,
     noSyntaxValidation: false,
     noSuggestionDiagnostics: true,
   });
 
   // JSON - allow syntax errors but no schema validation
-  monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+  monaco.languages.json?.jsonDefaults?.setDiagnosticsOptions({
     validate: true,
     schemas: [], // No schema validation
   });
 
   // CSS - keep syntax validation
-  monaco.languages.css.cssDefaults.setDiagnosticsOptions({
+  monaco.languages.css?.cssDefaults?.setDiagnosticsOptions({
     validate: true,
   });
 }
